@@ -151,14 +151,21 @@
 
 
 
-                                <ul class="menu menu--layout--classic">
-                                    <li><a href="">خروج</a></li>
-                                </ul>
+                                {% if user.is_authenticated %}
 
                                 <ul class="menu menu--layout--classic">
-                                    <li><a href="">ورود</a></li>
-                                    <li><a href="">ثبت نام</a></li>
+                                    <li><a href="{% url 'account:logout' %}">خروج</a></li>
                                 </ul>
+                                {% else %}
+
+
+                                <ul class="menu menu--layout--classic">
+                                    <li><a href="{% url 'account:login' %}">ورود</a></li>
+                                    <li><a href="{% url 'account:register' %}">ثبت نام</a></li>
+                                </ul>
+
+                                {% endif %}
+
 
 
                                 <!-- .menu / end -->
