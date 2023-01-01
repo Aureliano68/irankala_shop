@@ -1,0 +1,12 @@
+<!-- .block-products-carousel -->
+<div class="block block-products-carousel" data-layout="grid-5">
+    <div class="container">
+        {% include 'partial/product/root_group.html' with title="اخرین محصولات" %}
+
+        <div class="product-flex-box">
+            {% for product in products %} {% include 'partial/product/product-box.html' with type=2 %} {% endfor %}
+
+        </div>
+    </div>
+</div>
+<!-- .block-products-carousel / end -->

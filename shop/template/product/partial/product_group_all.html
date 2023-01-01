@@ -1,0 +1,23 @@
+{% extends 'maintemplate.html' %} {% load render_partial %} {% load humanize %} {% block title %} جزِیات کالا {% endblock title %} {% block content %}
+
+<div class="block-categories__list">
+    {% for group in group_product %}
+
+    <div class="block-categories__item category-card category-card--layout--compact">
+        <div class="category-card__body">
+            <div class="category-card__image">
+                <a href="">
+                    <img src="{{media_url}}{{group.grouppro_image}}" alt="">
+                </a>
+            </div>
+            <div class="category-card__content">
+                <div class="category-card__name"><a href="">{{group.grouppro_name}}</a></div>
+                <div class="category-card__products">{{group.product_of_group.all|length}} محصول</div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+{% endblock content %}

@@ -1,5 +1,6 @@
 import random
-
+import os
+from  uuid import uuid4
 def create_random_code(count):
     count-=1
     return random.randint(10**count,10**(count+1)-1)
@@ -16,3 +17,14 @@ def send_sms(mobilenumber,message):
     #     print(f'error is :{error}')
     # except HTTPException as error:
     #     print(error)
+    
+# -----------------------------------------------------------------------------------------------------------
+class FileUpload:
+    def __init__(self,dir,perfix):
+        self.dir=dir
+        self.perfix=perfix
+        
+    def imageupload(self,inctance,filename):
+        filename,ext=os.path.splitext(filename)
+        return f'{self.dir}/{self.perfix}/{uuid4()}{ext}'
+    
