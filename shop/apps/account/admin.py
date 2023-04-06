@@ -17,7 +17,7 @@ class CustomerUserAdmin(UserAdmin):
         
         fieldsets = (
         (None, {"fields": ("mobile_number", "password")}),
-        (("Personal info"), {"fields": ("name", "family", "gender")}),
+        (("Personal info"), {"fields": ("name", "family", "gender","email")}),
         (
             ("Permissions"),
             {
@@ -41,4 +41,10 @@ class CustomerUserAdmin(UserAdmin):
            "groups",
            "user_permissions",)
         
+        
 admin.site.register(CustomerUser,CustomerUserAdmin)
+
+
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display=['user','phone']

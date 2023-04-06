@@ -28,3 +28,12 @@ class FileUpload:
         filename,ext=os.path.splitext(filename)
         return f'{self.dir}/{self.perfix}/{uuid4()}{ext}'
     
+# -----------------------------------------------------------------------------------------------------------
+def price_by_delivery_tax(price,discount=0):
+        delivery=30000
+        if price>1000000:
+            delivery=0
+        tax=(price+delivery)*.09
+        sum=price+delivery+tax
+        sum=sum-(sum*discount/100)
+        return int(sum),delivery,int(tax)

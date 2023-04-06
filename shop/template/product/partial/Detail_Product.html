@@ -154,7 +154,9 @@
                             </div>
                         </div>
                         <div class="product__description">
-                            {% autoescape off %} {{product.product_description}} {% endautoescape %}
+                            {% autoescape off %}
+                             {{product.product_description}} 
+                             {% endautoescape %}
                         </div>
                         <!-- <ul class="product__features">
                             <li>سرعت: 750 RPM</li>
@@ -166,13 +168,53 @@
                         <ul class="product__meta">
                             <li class="product__meta-availability">موجودی: <span class="text-success">موجود در انبار</span></li>
                             <li>برند: <a href="">{{product.brand}}</a></li>
-                            <li>تعداد نظرات: <a href="">7</a> نظر</li>
+                            <li>تعداد نظرات: <a href="">{{product.product_comment.all | length}}</a> نظر</li>
 
                         </ul>
-                    </div>
+                        <div style="display: flex; justify-content:space-between; ">
+                            <h6>میانگین امتیاز: <span style="color: red;">{{product.get_avg_score}}</span></h6>
+                            
+                            {% if user.is_authenticated %}
+                                {% if product.get_user_score > 0 %}
+                                    <div>
+                                        
+                                        {% with ''|center:5 as range %}
+                                            
+                                            {% for i in range %}
+                                                
+                                                {% if forloop.counter <= product.get_user_score %}
+                                                        <span id='star_{{forloop.counter}}' class="fa fa-star checked"></span>
+                                                    {% else %}
+                                                        <span id='star_{{forloop.counter}}' class="fa fa-star"></span>
+ 
+                                                {% endif %}     
+                                            {% endfor %}           
+                                        {% endwith %}
+                                    </div>
+                                {% else %}
+                                    <div>
+                                        <span id='star_1' class='fa fa-star cursor-pointer' onclick="addScore(1,{{product.id}})"></span>
+                                        <span id='star_2' class='fa fa-star cursor-pointer' onclick="addScore(2,{{product.id}})"></span>
+                                        <span id='star_3' class='fa fa-star cursor-pointer' onclick="addScore(3,{{product.id}})"></span>
+                                        <span id='star_4' class='fa fa-star cursor-pointer' onclick="addScore(4,{{product.id}})"></span>
+                                        <span id='star_5' class='fa fa-star cursor-pointer' onclick="addScore(5,{{product.id}})"></span>
+                                    </div>
+
+                                {% endif %}
+                            {% else %}
+                                    <h6 style="text-decoration: underline;">
+                                        برای امتیاز دهی
+                                        <a href="{% url 'accounts:login' %}?next=/product/Detail_Product/{{product.slug}}/">ورود</a>
+                                         یا
+                                        <a href="{% url 'accounts:register' %}?next=/product/Detail_Product/{{product.slug}}/">ثبت نام</a> کنید
+                                    </h6>
+                            {% endif %}
+
+                        </div>
+                    </div >
                     <!-- .product__info / end -->
                     <!-- .product__sidebar -->
-                    <div class="product__sidebar">
+                    <div class="product__sidebar" >
                         <div class="product__availability">موجودی: <span class="text-success">موجود در انبار</span></div>
                         <div class="product__prices">{{product.price}} تومان</div>
                         <!-- .product__options -->
@@ -209,13 +251,12 @@
                                 <div class="product__actions">
                                     <div class="product__actions-item">
                                         <div class="input-number product__quantity">
-                                            <input id="product-quantity" class="input-number__input form-control form-control-lg" type="number" min="1" value="1">
-                                            <div class="input-number__add"></div>
-                                            <div class="input-number__sub"></div>
+                                            <input id="product-quantity" class="form-control form-control-lg" type="number" min="1" value="1">
+
                                         </div>
                                     </div>
                                     <div class="product__actions-item product__actions-item--addtocart">
-                                        <button class="btn btn-primary btn-lg">افزودن به سبد</button>
+                                        <button type="button" class="btn btn-primary btn-lg" onclick="add_to_shop_cart({{product.id}},0)">افزودن به سبد</button>
                                     </div>
                                     <div class="product__actions-item product__actions-item--wishlist">
                                         <button type="button" class="btn btn-secondary btn-svg-icon btn-lg" data-toggle="tooltip" title="Wishlist">
@@ -317,83 +358,84 @@
                                 <h3 class="reviews-view__header">دیدگاه های مشتریان</h3>
                                 <div class="reviews-list">
                                     <ol class="reviews-list__content">
-                                        <li class="reviews-list__item">
-                                            <div class="review">
-                                                <div class="review__avatar"><img src="images/avatars/avatar-1.jpg" alt=""></div>
-                                                <div class="review__content">
-                                                    <div class="review__author">مریم محمدی</div>
 
-                                                    <div class="review__text">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</div>
-                                                    <div class="review__date">27 فروردین 1401</div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="reviews-list__item">
-                                            <div class="review">
-                                                <div class="review__avatar"><img src="images/avatars/avatar-2.jpg" alt=""></div>
-                                                <div class="review__content">
-                                                    <div class="review__author">سعید جعفری</div>
-                                                    <div class="review__text">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و
-                                                        کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته،</div>
-                                                    <div class="review__date">12 فروردین 1401</div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="reviews-list__item">
-                                            <div class="review">
-                                                <div class="review__avatar"><img src="images/avatars/avatar-3.jpg" alt=""></div>
-                                                <div class="review__content">
-                                                    <div class="review__author">محبوبه حاتمی</div>
+                                        {% for comment in product.product_comment.all %}
+                                          {% if comment.is_active%} 
+                                            {% if comment.comment_parent == None %}
 
-                                                    <div class="review__text">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون</div>
-                                                    <div class="review__date">2 فروردین 1401</div>
-                                                </div>
-                                            </div>
-                                        </li>
+                                                <li class="reviews-list__item" style="display: flex; ">
+                                                    <div class="review">
+                                                        <div class="review__avatar"><img src="{{media_url}}images/avatars/avatar-1.jpg" alt=""></div>
+                                                        <div class="review__content">
+                                                            <div class="review__author">{{comment.comment_user}}
+
+                                                            </div>
+
+                                                            <div class="review__text">{{comment.comment_text}} </div>
+                                                            <!-- <div class="review__date">27 فروردین 1401</div> -->
+                                                        </div>
+                                                    </div>
+                                                    <div>
+
+                                                    {% if user.is_authenticated %}
+                                                    <div>   
+                                                        <a class="btn btn-info" id="btn_{{comment.id}}" onclick="ShowcreateCommentForm({{product.id}},{{comment.id}},'{{product.slug}}');">
+                                                                                پاسخ
+                                                                            </a>
+                                                    </div>
+                                                    <div id='comment_form_{{comment.id}}'>
+
+                                                    </div>
+
+                                                    {% endif %}
+                                                    </div>
+                                                 </li>
+
+                                                {% for item in comment.comment_child.all %}
+                                                   {% if item.is_active%}
+
+                                                        <li class="reviews-list__item" style="background-color: rgb(217, 237, 219); width:90%; margin:10px 13%;">
+                                                            <div class="review">
+                                                                <div class="review__avatar"><img src="{{media_url}}images/avatars/avatar-2.jpg" alt=""></div>
+                                                                <div class="review__content">
+                                                                    <div class="review__author">{{item.comment_user.name}} </div>
+
+                                                                    <div class="review__text">{{item.comment_text}} </div>
+                                                                    <!-- <div class="review__date">27 فروردین 1401</div> -->
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                    {% endif %}
+                                                {% endfor %} 
+                                            {% else %} 
+
+                                            {% endif %} 
+                                          {% endif %} 
+                                        {% endfor %}
                                     </ol>
-                                    <div class="reviews-list__pagination">
-                                        <ul class="pagination justify-content-center">
-                                            <li class="page-item disabled">
-                                                <a class="page-link page-link--with-arrow" href="" aria-label="Previous">
-                                                    <svg class="page-link__arrow page-link__arrow--left" aria-hidden="true" width="8px" height="13px">
-                                                        <use xlink:href="images/sprite.svg#arrow-rounded-left-8x13"></use>
-                                                    </svg>
-                                                </a>
-                                            </li>
-                                            <li class="page-item"><a class="page-link" href="">1</a></li>
-                                            <li class="page-item active"><a class="page-link" href="">2 <span class="sr-only">(کنونی)</span></a></li>
-                                            <li class="page-item"><a class="page-link" href="">3</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link page-link--with-arrow" href="" aria-label="Next">
-                                                    <svg class="page-link__arrow page-link__arrow--right" aria-hidden="true" width="8px" height="13px">
-                                                        <use xlink:href="images/sprite.svg#arrow-rounded-right-8x13"></use>
-                                                    </svg>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
+
                                 </div>
-                            </div>
-                            <form class="reviews-view__form">
+
+                            {% if user.is_authenticated %}
                                 <h3 class="reviews-view__header">دیدگاه هاخود را بنویسید</h3>
                                 <div class="row">
                                     <div class="col-12 col-lg-9 col-xl-8">
-                                        <div class="form-row">
-                                            <div class="form-group col-md-4">
-                                                <label for="review-author">نام شما</label>
-                                                <input type="text" class="form-control" id="review-author">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="review-text">دیدگاه شما</label>
-                                            <textarea class="form-control" id="review-text" rows="6"></textarea>
-                                        </div>
-                                        <div class="form-group mb-0">
-                                            <button type="submit" class="btn btn-primary btn-lg">ارسال نظر</button>
-                                        </div>
+                                        {%render_partial 'csf:create_comment' slug=product.slug %}
+
                                     </div>
                                 </div>
-                            </form>
+                                {% else %}
+                                <h5>برای درج دیدگاه خود باید
+                                    <a href="{% url 'accounts:login' %}?next=/product/{{product.slug}}/">ورود</a> یا
+                                    <a href="{% url 'accounts:register' %}?next=/product/{{product.slug}}/">ثبت نام</a> کنید
+                                </h5>
+
+                                {% endif %}
+
+
+                            </div>
+
                         </div>
                     </div>
                 </div>

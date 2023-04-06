@@ -11,7 +11,7 @@
                 <div class="nav-panel__nav-links nav-links">
                     <ul class="nav-links__list">
                         <li class="nav-links__item nav-links__item--with-submenu">
-                            <a href="index.html">
+                            <a href="{% url 'main:index' %}">
                                 <span><i class="fa fa-home"></i>&nbsp; خانه</span>
                             </a>
                         </li>
@@ -154,14 +154,14 @@
                                 {% if user.is_authenticated %}
 
                                 <ul class="menu menu--layout--classic">
-                                    <li><a href="{% url 'account:logout' %}">خروج</a></li>
+                                    <li><a href="{% url 'accounts:logout' %}">خروج</a></li>
                                 </ul>
                                 {% else %}
 
 
                                 <ul class="menu menu--layout--classic">
-                                    <li><a href="{% url 'account:login' %}">ورود</a></li>
-                                    <li><a href="{% url 'account:register' %}">ثبت نام</a></li>
+                                    <li><a href="{% url 'accounts:login' %}">ورود</a></li>
+                                    <li><a href="{% url 'accounts:register' %}">ثبت نام</a></li>
                                 </ul>
 
                                 {% endif %}
@@ -207,10 +207,10 @@
                         </a>
                     </div>
                     <div class="indicator">
-                        <a href="cart.html" class="indicator__button">
+                        <a href="{% url 'orders:shop_cart' %}" class="indicator__button">
                             <span class="indicator__area">
                                 <i class="fa fa-shopping-cart"></i>
-                                <span class="indicator__value">3</span>
+                                <span class="indicator__value" id="indicator__value">0</span>
                             </span>
                         </a>
                     </div>

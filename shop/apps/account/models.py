@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User,BaseUserManager,AbstractBaseUser,PermissionsMixin,UserManager
+from utilis import FileUpload
 # Create your models here.
 
 # ----------------------------------------------------------------------------------------------------------------------------------
@@ -65,3 +66,14 @@ class CustomerUser(AbstractBaseUser,PermissionsMixin):
         return self.is_admin==True
 
 # ----------------------------------------------------------------------------------------------------------------------------------
+class Customer(models.Model):
+    user=models.OneToOneField(CustomerUser,on_delete=models.CASCADE,primary_key=True)
+    phone=models.CharField(max_length=11,null=True,blank=True)
+    address=models.TextField(null=True,blank=True)
+    upload_image=FileUpload('images','customer')
+    image_name=models.ImageField(upload_to=upload_image.imageupload,verbose_name='تصویر پروفایل')
+    
+    def __str__(self) :
+        return f'{self.user}'
+    
+    

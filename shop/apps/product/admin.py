@@ -84,13 +84,34 @@ class BrandAdmin(admin.ModelAdmin):
     search_fields=('brand_name',)
     
 # =================================================================================================================================
+class feature_valueinline(admin.TabularInline):
+    model=FeatureValue
+    extra=3
+    
+# -------------------------------------------------------------------------------   
 @admin.register(Feature)
 class featureAdmin(admin.ModelAdmin):
-    list_display=('feature_name',)
+    list_display=('feature_name','display_group','display_featurevalue')
     list_filte=('feature_name',)
     search_fields=('feature_name',)
     ordering=('feature_name',)
+    inlines=[feature_valueinline,]
+    
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name=='group_PRODUCT':
+            kwargs['queryset']=GroupProduct.objects.filter(Q(is_active=True) & ~Q(group_parent=None))
+        return super(). formfield_for_manytomany( db_field, request, **kwargs)
+            
 
+    
+    @short_description('گروه های دارای این ویژگی')
+    def display_group(self,obj):
+       return '_'.join([item.grouppro_name for item in obj.group_PRODUCT.all()])
+   
+    @short_description('مقادیر ممکن این ویژگی')
+    def display_featurevalue(self,obj):
+        return '_'.join([item.value_title for item in obj.product_feature_value.all()])
+ 
 # =================================================================================================================================
 @short_description('غیر فعال کردن گروه کالا')
 def de_active_product(modeladmin,request,queryset):
@@ -113,9 +134,18 @@ def export_json_product(modeladmin,request,queryset):
     return response
 
 # -------------------------------------------------------------------------------  
-class ProductinstanceInline(admin.TabularInline):
+class ProductFeatureinstanceInline(admin.TabularInline):
     model=ProductFeature 
     extra=3
+    
+    class Media:
+        css={
+            'all':('css/admin_style.css',)
+        }
+        # js=(
+        #     "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.jss",
+        #     'js/admin_script.js',
+        # )
     
 # -------------------------------------------------------------------------------    
 class GaleryProductinstanceInline(admin.TabularInline):
@@ -127,7 +157,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display=('product_name','is_active','price','product_description','brand','register_date','publish_date','display_product_group')
     list_filter=("product_name",)
     search_fields=('product_name',)
-    inlines=[ProductinstanceInline,GaleryProductinstanceInline]
+    inlines=[ProductFeatureinstanceInline,GaleryProductinstanceInline]
     actions=[de_active_product,active_product,export_json_product]
     
     

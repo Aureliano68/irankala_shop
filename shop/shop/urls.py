@@ -21,9 +21,18 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('apps.main.urls',namespace='main'),name='main'),
-    path('account/',include('apps.account.urls',namespace='account'),name='account'),
+    path('accounts/',include('apps.account.urls',namespace='accounts'),name='accounts'),
     path('product/',include('apps.product.urls',namespace='product'),name='product'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('orders/',include('apps.orders.urls',namespace='orders'),name='orders'),
+    path('discount/',include('apps.discount.urls',namespace='discount'),name='discount'),
+    path('payment/',include('apps.payment.urls',namespace='payment'),name='payment'),
+    path('storeroom/',include('apps.storeroom.urls',namespace='storeroom'),name='storeroom'),
+    path('csf/',include('apps.coment_score_faw.urls',namespace='csf'),name='csf'),
+
+
+
+
 
 
 

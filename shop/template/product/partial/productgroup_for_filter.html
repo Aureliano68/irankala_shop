@@ -1,0 +1,13 @@
+<ul class="filter-categories__list">
+
+    {% for group in groupproduct %}
+
+
+    <li class="filter-categories__item filter-categories__item--parent">
+
+        <a href=""> {{group.grouppro_name}} </a>
+        <div class="filter-categories__counter">{{group.product_of_group.all |length}}</div>
+    </li>
+    {% endfor %}
+
+</ul>

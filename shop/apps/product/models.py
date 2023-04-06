@@ -3,6 +3,9 @@ from utilis import FileUpload
 from django.utils import timezone
 from ckeditor_uploader.fields import RichTextUploadingField 
 from django.urls import reverse
+from datetime import datetime
+from django.db.models import Sum,Avg
+import middlewares 
 # Create your models here.
 # =================================================================================================================================
 class GroupProduct(models.Model):
@@ -38,7 +41,7 @@ class Brand(models.Model):
     
     class Meta:
         db_table = 'brand'
-        managed = True
+        managed = True 
         verbose_name = 'برند'
         verbose_name_plural = 'برندها'
         
@@ -81,6 +84,54 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse("product:Detail_Product", kwargs={"slug": self.slug})
     
+    def get_price_by_discount(self):
+        list1=[]
+        for item in self.cuponbasketdetail2.all():
+            if(
+                item.cupon_basket.is_active==True and 
+                item.cupon_basket.start_date <= datetime.now() and 
+                datetime.now() <= item.cupon_basket.end_date  ):
+                list1.append(item.cupon_basket.discount)
+        discount=0
+        if (len(list1)>0) :
+            discount=max(list1)
+            
+        return self.price-(self.price*discount/100)
+    
+    
+    def get_number_in_storeroom(self):
+        sum1=self.storeroom_products.filter(storeroom_type_id=1).aggregate(Sum('qty'))
+        sum2=self.storeroom_products.filter(storeroom_type_id=2).aggregate(Sum('qty'))
+        input=0
+        if sum1['qty__sum']!=None:
+            input=sum1['qty__sum']
+        
+        output=0
+        if sum2['qty__sum']!=None:
+            output=sum2['qty__sum']
+        return input-output
+    
+    
+    # میزان امتیازی که کاربر جاری به این کالا داده
+    def get_user_score(self):
+        request=middlewares.RequestMiddlewar(get_response=None)
+        request=request.thread_local.current_request
+        score=0
+        user_score=self.customer_score.all().filter(scoring_user=request.user)
+        if user_score.count()>0:
+            score=user_score[0].score
+        return score
+        
+    
+    
+    # میانگین امتیازی که این کالا کسب کرده
+    def get_avg_score(self):
+        avgscore=self.product_score.all().aggregate(Avg('score'))['score__avg']
+        if avgscore==None:
+            avgscore=0
+        return avgscore
+
+    
     class Meta:
         db_table = 'product'
         managed = True
@@ -89,10 +140,25 @@ class Product(models.Model):
         
 
 # =================================================================================================================================
+class FeatureValue(models.Model):
+    value_title=models.CharField(max_length=100,verbose_name='عنوان مقدار')
+    feature=models.ForeignKey(Feature,on_delete=models.CASCADE,null=True,blank=True,verbose_name=' ویژگی',related_name='product_feature_value')
+    
+    def __str__(self) -> str:
+        return f'{self.value_title}'
+    
+    class Meta:
+        db_table = 'featurevalue'
+        managed = True
+        verbose_name = 'مقدار ویژگی'
+        verbose_name_plural = 'مقادیر ویژگی ها'
+        
+# =================================================================================================================================
 class ProductFeature(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,verbose_name=' کالا',related_name='feature_pro')
     feature=models.ForeignKey(Feature,on_delete=models.CASCADE,verbose_name=' ویژگی')
     value=models.CharField(max_length=50,verbose_name='مقدار ویژگی کالا')
+    filter_value=models.ForeignKey(FeatureValue,on_delete=models.CASCADE,null=True,blank=True,verbose_name=' مقادیر ویزگی انتخابی',related_name='product_filter_value')
     
     def __str__(self):
         return f'{self.value}'

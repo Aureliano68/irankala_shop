@@ -5550,11 +5550,7 @@ screen and (-ms-high-contrast:active) {
     margin: 0
 }
 
-.payment-methods__item {
-    border-radius: 2px;
-    background: transparent;
-    border: 1px solid #e5e5e5
-}
+.payment-methods__item {}
 
 .payment-methods__item:hover {
     background: #f7f7f7;
@@ -11003,4 +10999,25 @@ screen and (-ms-high-contrast:active) {
     flex-direction: row;
     justify-content: center;
     flex-wrap: wrap;
+}
+
+#input-coupon-code {
+    width: 500px !important;
+}
+
+.form-check-label {
+    margin-right: 30px;
+}
+
+.input-check__body {
+    margin-right: 30px;
+}
+
+.input-radio__body {
+    margin-right: 15px;
+}
+
+.payment {
+    margin-right: 35px !important;
+    padding-bottom: 50px !important;
 }

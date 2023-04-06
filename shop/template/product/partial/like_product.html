@@ -10,7 +10,7 @@
             <div class="block-categories__item category-card category-card--layout--compact">
                 <div class="category-card__body">
                     <div class="category-card__image">
-                        <a href="">
+                        <a href="{% url 'product:get_group_product' slug=group.slug %}">
                             <img src="{{media_url}}{{group.grouppro_image}}" alt="">
                         </a>
                     </div>

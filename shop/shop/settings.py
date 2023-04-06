@@ -40,6 +40,13 @@ INSTALLED_APPS = [
     'apps.main.apps.MainConfig',
     'apps.account.apps.AccountConfig',
     'apps.product.apps.ProductConfig',
+    'apps.orders.apps.OrdersConfig', 
+    'apps.discount.apps.DiscountConfig', 
+    'apps.payment.apps.PaymentConfig', 
+    'apps.storeroom.apps.StoreroomConfig', 
+    'apps.coment_score_faw.apps.ComentScoreFawConfig', 
+    
+    
     'django_admin_listfilter_dropdown',
     'ckeditor',
     'ckeditor_uploader',
@@ -58,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middlewares.middlewares.RequestMiddlewar',
+    
 ]
 
 ROOT_URLCONF = 'shop.urls'

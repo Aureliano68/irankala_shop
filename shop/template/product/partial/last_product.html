@@ -4,7 +4,9 @@
         {% include 'partial/product/root_group.html' with title="اخرین محصولات" %}
 
         <div class="product-flex-box">
-            {% for product in products %} {% include 'partial/product/product-box.html' with type=2 %} {% endfor %}
+            {% for product in products %} 
+            {% include 'partial/product/product-box.html' with type=2 %} 
+            {% endfor %}
 
         </div>
     </div>

@@ -22,44 +22,45 @@ class RegisterUserView(View):
                 password=data['password1'],
             )
             utilis.send_sms(data['mobile_number'],f'کد فعال سازی حساب شما{active_code}میباشد')
-            request.session['user.session']={
+            request.session['user_session']={
                 'mobile_number':data['mobile_number'],
                 'active_code':str(active_code),
                 'remember_change':False
 
             }
             messages.success(request,' اطلاعات شما ثبت شد.کد فعال سازی را وارد کنید','success')
-            return redirect('account:verify')
+            return redirect('accounts:verify')
         messages.error(request,'اطلاعات وارد شده معتبر نمیباشد','danger')
-        return redirect('account:register')
+        return redirect('accounts:register')
     
     
 # ----------------------------------------------------------------------------------------------------------------------------------  
 class VerifyUserView(View):
-     def get(self,request,*args,**kwargs):
-        form=VerifyUserForm()
-        return render(request,'account/Verify.html',{'form':form})
+    def get(self,request,*args,**kwargs):
+        form=VerifyUserForm
+        return render(request,'account/vrifyuser.html',{'form':form})
+
     
-     def post(self,request,*args,**kwargs):
+    def post(self,request,*args,**kwargs):
         form=VerifyUserForm(request.POST)
         if form.is_valid():
             data=form.cleaned_data
             user_session= request.session['user_session']
             if data['active_code']==user_session['active_code']:
                 user=CustomerUser.objects.get(mobile_number=user_session['mobile_number'])
-                if user_session['remember_change']==False:
-                    user.is_active==True
+                if user_session['remember_change'] ==False:
+                    user.is_active=True
                     user.active_code=utilis.create_random_code(5)
                     user.save()
                     messages.success(request,'ثبت نام با موفقیت انجام شد','success')
                     return redirect('main:index')
                 else:
-                    return redirect('account:changepassword')
+                    return redirect('accounts:changepass')
 
             messages.error(request,'کد وارد شده معتبر نمیباشد','danger')
-            return redirect('account:verify')
+            return redirect('accounts:verify')
         messages.error(request,'اطلاعات وارد شده معتبر نمیباشد','danger')
-        return redirect('account:verify')
+        return redirect('accounts:verify')
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 class LoginUserView(View):
@@ -95,8 +96,15 @@ class LoginUserView(View):
                     
 # ----------------------------------------------------------------------------------------------------------------------------------
 class LogoutUser(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+             return redirect('main:index')
+        return super().dispatch(request, *args, **kwargs)
+    
     def get(self,request,*args,**kwargs):
+        session_data=request.session.get('shop_cart')
         logout(request)
+        request.session['shop_cart']=session_data
         return redirect('main:index')                
 
 # ----------------------------------------------------------------------------------------------------------------------------------
@@ -117,7 +125,7 @@ class ChangePasswordUserView(View):
             user.active_code=utilis.create_random_code(5)
             user.save()
             messages.success(request,'تغییر رمز شما با موفقیت انجام شد','success')
-            return redirect('account:login')
+            return redirect('accounts:login')
         
         messages.error(request,'اطلاعات وارد شده معتبر نمیباشد','danger')
         return render(request,self.template_name,{'form':form})
@@ -148,7 +156,7 @@ class RememberchangeView(View):
                         'remember_change':True
                     }
                 messages.success(request,'  کد ارسالی را وارد کنید   ','success')
-                return redirect('account:verify')
+                return redirect('accounts:verify')
             except:
                  messages.error(request,'شماره موبایل وارد شده اشتباه است','danger')
                  return render(request,self.template_name,{'form':form})
