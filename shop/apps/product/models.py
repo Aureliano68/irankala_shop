@@ -186,4 +186,13 @@ class GaleryProduct(models.Model):
 # =================================================================================================================================
 
         
+class GaleryProduct(models.Model):
+    products=models.ForeignKey(Product,on_delete=models.CASCADE,verbose_name='کالا',related_name='galery_of_product')
+    image_upload=FileUpload('images','Galery_product')
+    product_image=models.ImageField(upload_to=image_upload.imageupload,verbose_name='تصاویر کالا')
     
+    class Meta:
+        db_table = 'galeryproduct'
+        managed = True
+        verbose_name = 'تصویر محصول'
+        verbose_name_plural = 'تصاویر محصولات'
